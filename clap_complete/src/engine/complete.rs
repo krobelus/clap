@@ -165,6 +165,9 @@ fn complete_arg(
                 .find(|p| p.get_index() == Some(pos_index))
             {
                 completions.extend(complete_arg_value(arg.to_value(), positional, current_dir));
+                if matches!(positional.get_action(), clap::ArgAction::Append) {
+                    complete_option(&mut completions, arg, cmd, current_dir);
+                }
             }
         }
         ParseState::Opt((opt, count)) => {

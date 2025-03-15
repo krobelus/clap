@@ -789,10 +789,18 @@ fn suggest_multi_positional_unbounded() {
         snapbox::str![[r#"
 pos_1
 pos_2
+--format
+--help	Print help
 "#]]
     );
 
-    assert_data_eq!(complete!(cmd, "pos_1 --[TAB]"), snapbox::str![""]);
+    assert_data_eq!(
+        complete!(cmd, "pos_1 --[TAB]"),
+        snapbox::str![[r#"
+--format
+--help	Print help
+"#]]
+    );
 
     assert_data_eq!(
         complete!(cmd, "pos_1 --format [TAB]"),
@@ -813,7 +821,13 @@ pos_2
 "#]]
     );
 
-    assert_data_eq!(complete!(cmd, "pos_1 pos_2 --[TAB]"), snapbox::str![""]);
+    assert_data_eq!(
+        complete!(cmd, "pos_1 pos_2 --[TAB]"),
+        snapbox::str![[r#"
+--format
+--help	Print help
+"#]]
+    );
     assert_data_eq!(
         complete!(cmd, "pos_1 pos_2 --format json [TAB]"),
         snapbox::str![[r#"
