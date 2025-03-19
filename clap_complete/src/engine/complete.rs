@@ -47,7 +47,14 @@ pub fn complete(
             arg.to_value_os(),
         );
         if cursor == target_cursor {
-            return complete_arg(&arg, current_cmd, current_dir, pos_index, current_state);
+            return complete_arg(
+                &arg,
+                current_cmd,
+                current_dir,
+                pos_index,
+                is_escaped,
+                current_state,
+            );
         }
 
         if let Ok(value) = arg.to_value() {
@@ -133,6 +140,7 @@ fn complete_arg(
     cmd: &clap::Command,
     current_dir: Option<&std::path::Path>,
     pos_index: usize,
+    is_escaped: bool,
     state: ParseState<'_>,
 ) -> Result<Vec<CompletionCandidate>, std::io::Error> {
     debug!(
@@ -157,7 +165,9 @@ fn complete_arg(
             {
                 completions.extend(complete_arg_value(arg.to_value(), positional, current_dir));
             }
-            complete_option(&mut completions, arg, cmd, current_dir);
+            if !is_escaped {
+                complete_option(&mut completions, arg, cmd, current_dir);
+            }
         }
         ParseState::Pos(..) => {
             if let Some(positional) = cmd
@@ -166,7 +176,9 @@ fn complete_arg(
             {
                 completions.extend(complete_arg_value(arg.to_value(), positional, current_dir));
                 if matches!(positional.get_action(), clap::ArgAction::Append) {
-                    complete_option(&mut completions, arg, cmd, current_dir);
+                    if !is_escaped {
+                        complete_option(&mut completions, arg, cmd, current_dir);
+                    }
                 }
             }
         }
@@ -180,6 +192,7 @@ fn complete_arg(
                     cmd,
                     current_dir,
                     pos_index,
+                    is_escaped,
                     ParseState::ValueDone,
                 )?);
             }

@@ -739,8 +739,9 @@ pos_c
     assert_data_eq!(
         complete!(cmd, "--format json pos_1 pos_a pos_b pos_c [TAB]"),
         snapbox::str![[r#"
---format
---help	Print help
+pos_a
+pos_b
+pos_c
 "#]]
     );
 
@@ -764,7 +765,11 @@ pos_c
 
     assert_data_eq!(
         complete!(cmd, "--format json -- pos_1 pos_a pos_b pos_c [TAB]"),
-        snapbox::str![]
+        snapbox::str![[r#"
+pos_a
+pos_b
+pos_c
+"#]]
     );
 }
 
@@ -975,8 +980,6 @@ comma,tab
 a_pos
 b_pos
 c_pos
---delimiter
---help	Print help
 "#]]
     );
 
